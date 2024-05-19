@@ -29,6 +29,6 @@ jobs:
     - name: Pull docker image
       run: docker pull ${{ secrets.DOCKER_USERNAME }}/nodejs-cicd:latest
     - name: Delete old container
-      run: docker rm -f $(docker ps -a -q --filter ancestor=${{ secrets.DOCKER_USERNAME }}/nodejs-cicd)
+      run: docker ps -a -q --filter ancestor=${{ secrets.DOCKER_USERNAME }}/nodejs-cicd | xargs -r docker rm -f
     - name: Run docker container
       run: docker run -d -p 8900:8900 -e MONGO_PASSWORD=${{ secrets.MONGODB_PASSWORD }} ${{ secrets.DOCKER_USERNAME }}/nodejs-cicd
