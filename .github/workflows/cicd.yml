@@ -1,32 +1,30 @@
-name: Node.js CI/CD
+name: Deploy Node Application
 
-on:
+on: 
   push:
-    branches: 
-      - main
-  pull_request:
-    branches: 
+    branches:
       - main
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Source
-      uses: actions/checkout@v4
-    - name: Login to dockerhub
-      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-    - name: Build docker image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/nodejs-cicd ./server
-    - name: Publish docker image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/nodejs-cicd:latest
-  
+      - name: Checkout Source
+        uses: actions/checkout@v4
+      - name: Login to docker hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}     
+      - name: Build Docker Image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/nodejs-app  .
+      - name: Publish Image to docker hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/nodejs-app:latest 
+ 
   deploy:
-    runs-on: self-hosted
     needs: build
+    runs-on: self-hosted 
     steps:
-    - name: Pull docker image
-      run: docker pull ${{ secrets.DOCKER_USERNAME }}/nodejs-cicd:latest
-    - name: Run docker container
-      run: docker run -d -p 8900:8900 --name nodejs-app-container -e MONGO_PASSWORD=${{ secrets.MONGODB_PASSWORD }} ${{ secrets.DOCKER_USERNAME }}/nodejs-cicd
+      - name: Pull image from docker hub
+        run: docker pull ${{ secrets.DOCKER_USERNAME }}/nodejs-app:latest 
+      - name: Delete old container
+        run: docker rm -f nodejs-app-container  
+      - name: Run Docker Container
+        run: docker run -d -p 8900:8900 --name nodejs-app-container -e MONGO_PASSWORD='${{ secrets.MONGODB_PASSWORD }}' ${{ secrets.DOCKER_USERNAME }}/nodejs-app
