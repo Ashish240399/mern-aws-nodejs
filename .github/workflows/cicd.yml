@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Pull image from docker hub
         run: docker pull ${{ secrets.DOCKER_USERNAME }}/nodejs-app:latest 
+      - name: Stop existing Docker containers
+        run: docker stop $(docker ps -q --filter ancestor=${{ secrets.DOCKER_USERNAME }}/nodejs-app) || true
       - name: Delete old container
         run: docker rm -f nodejs-app-container  
       - name: Run Docker Container
