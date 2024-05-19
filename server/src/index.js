@@ -13,8 +13,8 @@ app.use("/hello",helloRouter);
 (async () => {
     try {
       await connectDB();
-      app.listen(8900, () => {
-        console.log(`Server is running on port 8900`);
+      app.listen(8901, () => {
+        console.log(`Server is running on port 8901`);
       });
     } catch (error) {
       console.error('Failed to start server', error);

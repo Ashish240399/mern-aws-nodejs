@@ -12,8 +12,8 @@ RUN npm install
 # Copy the application files to the working directory
 COPY src/ ./src/
 
-# Make port 8900 available to the outside of the Docker container
-EXPOSE 8900
+# Make port 8901 available to the outside of the Docker container
+EXPOSE 8901
 
 # Define the command to run the application
 CMD [ "node", "src/index.js" ]
