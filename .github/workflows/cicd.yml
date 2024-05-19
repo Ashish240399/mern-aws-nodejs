@@ -28,7 +28,13 @@ jobs:
     steps:
     - name: Pull docker image
       run: docker pull ${{ secrets.DOCKER_USERNAME }}/nodejs-cicd:latest
-    - name: Delete old container
-      run: docker rm -f nodejs-app-container
+    - name: Stop and remove old container
+      run: |
+        if [ "$(docker ps -q -f name=nodejs-app-container)" ]; then
+          docker stop nodejs-app-container
+        fi
+        if [ "$(docker ps -aq -f name=nodejs-app-container)" ]; then
+          docker rm nodejs-app-container
+        fi
     - name: Run docker container
       run: docker run -d -p 8900:8900 --name nodejs-app-container -e MONGO_PASSWORD=${{ secrets.MONGODB_PASSWORD }} ${{ secrets.DOCKER_USERNAME }}/nodejs-cicd
